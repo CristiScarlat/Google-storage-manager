@@ -1,14 +1,18 @@
-import React from 'react';
-import { useGoogleLogout } from 'react-google-login';
+import React, { useState } from "react";
+import { Redirect } from "react-router-dom";
+import { useGoogleLogout } from "react-google-login";
+import { Button } from 'react-bootstrap'; 
 
 function Logout() {
-  
+  const [redirect, setRedirect] = useState(false);
+
   const onLogoutSuccess = (res) => {
-    logout()
+    localStorage.clear();
+    setRedirect(true);
   };
 
   const onFailure = () => {
-    console.log('Handle failure cases');
+    console.log("Handle failure cases");
   };
 
   const { signOut, loaded } = useGoogleLogout({
@@ -17,30 +21,12 @@ function Logout() {
     onFailure,
   });
 
-  const logout = () => {
-    if (window.gapi) {
-        const auth2 = window.gapi.auth2.getAuthInstance()
-        console.log(auth2)
-        if (auth2 != null) {
-            auth2.signOut().then(() => {
-                console.log('auth2')
-                localStorage.clear()
-                auth2.disconnect()
-                .then(res => {
-                    console.log('logout successfully')
-                    onLogoutSuccess()
-                })
-                .catch(error => {
-                    console.log(error)
-                })
-            }
-            )
-        }
-    }
-  }
-
-  return loaded ? <button onClick={signOut}> Sign out </button> : null
-
+  return (
+    <>
+      {redirect && <Redirect to="/login" />}
+      <Button variant="outline-light" onClick={signOut}> Sign out </Button>
+    </>
+  );
 }
 
 export default Logout;

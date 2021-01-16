@@ -1,11 +1,10 @@
 import React from 'react';
 import { Navbar } from 'react-bootstrap';
 import Logout from '../../pages/auth/logout'
+import { connect } from 'react-redux';
 import './header.css';
 
-function Header() {
-
-    const user = localStorage.getItem('user');
+function Header(props) {
 
     return(
         <Navbar className="d-flex justify-content-between" bg="dark" variant="dark">
@@ -13,12 +12,15 @@ function Header() {
           Google Storage Manager
         </Navbar.Brand>
         <div className="d-flex justify-content-center align-items-center">
-            <div className="login-info pr-2">{`Loged in as: ${user}`}</div>
+            {props.user && <div className="login-info pr-2">{`Loged in as: ${props.user}`}</div>}
             <Logout/>
         </div>
-        
       </Navbar>
     )
 }
 
-export default Header;
+function mapStateToProps(state) {
+  return state
+}
+
+export default connect(mapStateToProps, null)(Header);

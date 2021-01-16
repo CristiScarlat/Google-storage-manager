@@ -15,8 +15,6 @@ function Home() {
     token && fetchBuckets();
   }, [token]);
 
-  console.log({ token, buckets });
-
   return (
     <>
       {token ? (
@@ -33,7 +31,7 @@ function Home() {
             </thead>
             <tbody>
               {buckets.map((bucket, index) => (
-                  <tr>
+                  <tr key={`${bucket.name}-${index}`}>
                     <td>{index}</td>
                     <td>{bucket.name}</td>
                     <td>{bucket.storageClass}</td>

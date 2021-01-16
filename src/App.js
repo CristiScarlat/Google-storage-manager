@@ -7,6 +7,7 @@ import {
 import Login from './pages/auth/login';
 import Header from './components/header/header';
 import Home from './pages/home/home';
+import Bucket from './pages//bucketDetails/bucketDetails';
 import { useDispatch } from "react-redux";
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
         <Switch>
           <Route exact path='/' component={Home} />
           <Route exact path='/login' component={Login} />
+          <Route exact path='/bucket-details/:bucket' component={Bucket}/>
         </Switch>
       </div>
     </Router>

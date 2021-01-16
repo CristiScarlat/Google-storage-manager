@@ -56,4 +56,4 @@ function Login() {
   );
 }
 
-export default connect(null, { login })(Login);
+export default Login;

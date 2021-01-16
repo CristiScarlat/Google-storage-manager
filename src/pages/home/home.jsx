@@ -1,23 +1,28 @@
-import React, { useState, useEffect } from "react";
-import { Redirect } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { Redirect, Link } from "react-router-dom";
+import { connect } from 'react-redux';
 import { listBucketsByProject } from "../../services/googleStorageApi";
 import { Table, Spinner } from "react-bootstrap";
 
-function Home() {
-  const token = localStorage.getItem("access_token");
+import './home.css';
+
+function Home(props) {
+
   const [buckets, setBuckets] = useState(null);
 
   useEffect(() => {
+    
     async function fetchBuckets() {
       const res = await listBucketsByProject();
       if (res.status === 200) setBuckets(res?.data?.items);
     }
-    token && fetchBuckets();
-  }, [token]);
+    props.token && fetchBuckets();
+  }, []);
+
 
   return (
     <>
-      {token ? (
+      {props.token ? (
         <div className="home-container p-3">
           <div>Buckets list </div>
           {buckets ? <Table bordered hover>
@@ -33,7 +38,7 @@ function Home() {
               {buckets.map((bucket, index) => (
                   <tr key={`${bucket.name}-${index}`}>
                     <td>{index}</td>
-                    <td>{bucket.name}</td>
+                    <td><Link to={`/bucket-details/${bucket.name}`}>{bucket.name}</Link></td>
                     <td>{bucket.storageClass}</td>
                     <td>{bucket.location}</td>
                   </tr>
@@ -49,4 +54,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default connect(state => state)(Home);

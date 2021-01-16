@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-    baseURL: 'https://storage.googleapis.com/storage/v1/b'
+    baseURL: process.env.REACT_APP_BASE_API_URL
 });
 
 const request = async (method, url, parameters) => {

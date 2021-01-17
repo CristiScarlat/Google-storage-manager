@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import {
   listFilesInBucket,
   downloadMediaLink,
+  uploadFile
 } from "../../services/googleStorageApi";
 import { Table, Spinner } from "react-bootstrap";
 
@@ -15,26 +16,30 @@ function Bucket(props) {
   const [orderByNameDirection, setOrderByNameDirection] = useState("des");
 
   useEffect(() => {
-    async function fetchData() {
-      const res = await listFilesInBucket(bucket);
-      if (res.status === 200 && res.data.items) {
-        setFiles(res.data.items);
-      }
-    }
-    bucket && fetchData();
+    fetchData()
   }, []);
+
+  async function fetchData() {
+    const res = await listFilesInBucket(bucket);
+    if (res.status === 200 && res.data.items) {
+      setFiles(res.data.items);
+    }
+  }
 
   const hanleSelectFile = async (file) => {
     console.log(file);
     setSelectedFile(file);
-    const df = await downloadMediaLink(file.mediaLink);
-    downloadFile(df.data, file.contentType, file.name)
+    const df = await downloadMediaLink(bucket, file.name);
+    downloadFile(df.data, file.contentType, file.name);
+    console.log(df);
   };
 
   const downloadFile = (data, contentType, fileName) => {
-    const url = window.URL.createObjectURL(new Blob([data], {
+    const url = window.URL.createObjectURL(
+      new Blob(new Uint32Array(data), {
         type: contentType,
-      }))
+      })
+    );
     const anchor = document.createElement("a");
 
     anchor.href = url;
@@ -49,6 +54,12 @@ function Bucket(props) {
       document.body.removeChild(anchor);
     }, 100);
   };
+
+  const handleUploadFile = async (e) => {
+    const file = e.target.files[0];
+    const uf = await uploadFile(bucket, file.name, file.name);
+    if(uf.status === 200) await fetchData();
+  }
 
   const orderByName = () => {
     const orderedFiles = files;
@@ -101,6 +112,12 @@ function Bucket(props) {
           ) : (
             <Spinner className="spinner" animation="border" role="status" />
           )}
+          <label className="mr-2" htmlFor="inputId">Upload File</label>
+          <input
+            id="inputId"
+            type="file"
+            onChange={handleUploadFile}
+          ></input>
         </div>
       ) : (
         <Redirect to="/login" />
